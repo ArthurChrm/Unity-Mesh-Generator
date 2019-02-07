@@ -9,6 +9,8 @@ public class Mesh_Generator : MonoBehaviour
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
+    int X_SIZE = 100;
+    int Z_SIZE = 100;
 
     // Start is called before the first frame update
     void Start()
@@ -22,20 +24,49 @@ public class Mesh_Generator : MonoBehaviour
 
     void CreateShape()
     {
-        vertices = new Vector3[]{
-            new Vector3(0,0,0),
-            new Vector3(0,0,1),
-            new Vector3(1,0,0)
-        };
+        vertices = new Vector3[(X_SIZE + 1) * (Z_SIZE + 1)];
 
-        triangles = new int[]{
-            0,1,2
-        };
+        for (int i = 0, z = 0; z <= Z_SIZE; z++)
+        {
+            for (int x = 0; x < X_SIZE; x++)
+            {
+                float y = Mathf.PerlinNoise(x * .3f, z * .3f) * 2f;
+                vertices[i] = new Vector3(x, y, z);
+                i++;
+            }
+        }
+
+        triangles = new int[X_SIZE * Z_SIZE * 6];
+
+        int vert = 0;
+        int tris = 0;
+
+        for (int z = 0; z < Z_SIZE; z++)
+        {
+            for (int x = 0; x < X_SIZE; x++)
+            {
+
+                triangles[0 + tris] = vert + 0;
+                triangles[1 + tris] = vert + X_SIZE + 1;
+                triangles[2 + tris] = vert + 1;
+                triangles[3 + tris] = vert + 1;
+                triangles[4 + tris] = vert + X_SIZE + 1;
+                triangles[5 + tris] = vert + X_SIZE + 2;
+
+                vert++;
+                tris += 6;
+            }
+            vert++;
+        }
+
     }
 
-    void UpdateMesh(){
+    void UpdateMesh()
+    {
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
+
+        mesh.RecalculateNormals();
     }
 }
