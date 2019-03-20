@@ -11,7 +11,7 @@ public class Mesh_Generator : MonoBehaviour
     int[] triangles;
     int X_SIZE = 100;
     int Z_SIZE = 100;
-    int compteur = 0;
+    int precedantePosition = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -73,11 +73,13 @@ public class Mesh_Generator : MonoBehaviour
 
     void Update()
     {
-        for(int i=0; i<vertices.Length; i++){
-            vertices[i].y = Mathf.PerlinNoise(vertices[i].y,100.0f)*5;
+        for (int i = precedantePosition; i < precedantePosition + X_SIZE; i++)
+        {
+            vertices[i].y = Mathf.PerlinNoise(vertices[i].y, 100.0f) * 5;
         }
+        precedantePosition += X_SIZE;
+        if (precedantePosition+100 > vertices.Length - 1)
+            precedantePosition = 0;
         UpdateMesh();
-        
-        Debug.Log("END UPDATE");
     }
 }
